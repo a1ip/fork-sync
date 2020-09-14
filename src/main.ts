@@ -20,8 +20,10 @@ async function run() {
     console.log(typeof context.repo.owner);
     console.log(typeof context.repo.repo);
     console.log(typeof pr.data.number);
-    await octokit.pulls.merge({ owner: context.repo.owner, repo: context.repo.repo, pull_number: Number(pr.data.number) });
+    let res = await octokit.pulls.merge({ owner: context.repo.owner, repo: context.repo.repo, pull_number: pr.data.number });
+    console.log(res);
   } catch (error) {
+    console.log(error);
     if (!!error.errors && error.errors[0].message.startsWith('No commits between')) {
       console.log('No commits between ' + context.repo.owner + ':' + base + ' and ' + owner + ':' + head);
     } else {
