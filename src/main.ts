@@ -4,7 +4,8 @@ const { Octokit } = require("@octokit/rest");
 const { retry } = require("@octokit/plugin-retry");
 const githubToken = core.getInput('github_token', { required: true });
 const context = Github.context;
-const octokit = new Octokit({auth: githubToken});
+const MyOctokit = Octokit.plugin(retry)
+const octokit = new MyOctokit({auth: githubToken});
 
 async function run() {
   const owner = core.getInput('owner', { required: false }) || context.repo.owner;
@@ -20,7 +21,7 @@ async function run() {
     console.log(typeof context.repo.owner);
     console.log(typeof context.repo.repo);
     console.log(typeof pr.data.number);
-    await sleep(2000);
+    console.log("foo");
     let res = await octokit.pulls.merge({ owner: context.repo.owner, repo: context.repo.repo, pull_number: pr.data.number });
     console.log(res);
   } catch (error) {
@@ -33,10 +34,6 @@ async function run() {
       }
     }
   }
-}
-
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 run();
